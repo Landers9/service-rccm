@@ -7,15 +7,18 @@ import {
   X,
   ExternalLink,
   MapPin,
-  Globe,
   Building2,
   ChevronRight,
   Mail,
   Phone,
   FileText,
   Shield,
+  ArrowRight,
+  Clock,
+  TrendingUp,
+  BarChart3,
   Users,
-  Scale,
+  CheckCircle,
 } from "lucide-react";
 
 interface Country {
@@ -25,12 +28,18 @@ interface Country {
   capital: string;
   url: string;
   status: "active" | "coming-soon";
+  stats?: {
+    companies: string;
+    growth: string;
+  };
 }
 
 export default function ERCCMPortal() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [hoveredCountry, setHoveredCountry] = useState<string | null>(null);
+  const [selectedFilter, setSelectedFilter] = useState<
+    "all" | "active" | "coming-soon"
+  >("all");
 
   const countries: Country[] = [
     {
@@ -40,6 +49,7 @@ export default function ERCCMPortal() {
       capital: "Porto-Novo",
       url: "https://rccm.bj",
       status: "active",
+      stats: { companies: "45,230", growth: "+12%" },
     },
     {
       id: "burkina",
@@ -48,6 +58,7 @@ export default function ERCCMPortal() {
       capital: "Ouagadougou",
       url: "https://rccm.bf",
       status: "active",
+      stats: { companies: "38,120", growth: "+8%" },
     },
     {
       id: "cameroun",
@@ -56,6 +67,7 @@ export default function ERCCMPortal() {
       capital: "Yaoundé",
       url: "https://rccm.cm",
       status: "active",
+      stats: { companies: "89,450", growth: "+15%" },
     },
     {
       id: "centrafrique",
@@ -80,6 +92,7 @@ export default function ERCCMPortal() {
       capital: "Brazzaville",
       url: "https://rccm.cg",
       status: "active",
+      stats: { companies: "28,340", growth: "+6%" },
     },
     {
       id: "rdc",
@@ -88,6 +101,7 @@ export default function ERCCMPortal() {
       capital: "Kinshasa",
       url: "https://rccm.cd",
       status: "active",
+      stats: { companies: "67,890", growth: "+18%" },
     },
     {
       id: "gabon",
@@ -96,6 +110,7 @@ export default function ERCCMPortal() {
       capital: "Libreville",
       url: "https://rccm.ga",
       status: "active",
+      stats: { companies: "34,120", growth: "+10%" },
     },
     {
       id: "guinee",
@@ -128,6 +143,7 @@ export default function ERCCMPortal() {
       capital: "Yamoussoukro",
       url: "https://rccm.ci",
       status: "active",
+      stats: { companies: "76,540", growth: "+14%" },
     },
     {
       id: "mali",
@@ -136,6 +152,7 @@ export default function ERCCMPortal() {
       capital: "Bamako",
       url: "https://rccm.ml",
       status: "active",
+      stats: { companies: "42,890", growth: "+9%" },
     },
     {
       id: "niger",
@@ -144,6 +161,7 @@ export default function ERCCMPortal() {
       capital: "Niamey",
       url: "https://rccm.ne",
       status: "active",
+      stats: { companies: "31,670", growth: "+7%" },
     },
     {
       id: "senegal",
@@ -152,6 +170,7 @@ export default function ERCCMPortal() {
       capital: "Dakar",
       url: "https://rccm.sn",
       status: "active",
+      stats: { companies: "93,210", growth: "+16%" },
     },
     {
       id: "tchad",
@@ -160,6 +179,7 @@ export default function ERCCMPortal() {
       capital: "N'Djamena",
       url: "https://rccm.td",
       status: "active",
+      stats: { companies: "26,450", growth: "+5%" },
     },
     {
       id: "togo",
@@ -168,35 +188,39 @@ export default function ERCCMPortal() {
       capital: "Lomé",
       url: "https://rccm.tg",
       status: "active",
+      stats: { companies: "38,920", growth: "+11%" },
     },
   ];
 
-  const filteredCountries = searchQuery.trim()
-    ? countries.filter(
-        (country) =>
-          country.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          country.capital.toLowerCase().includes(searchQuery.toLowerCase())
-      )
-    : countries;
+  const filteredCountries = countries.filter((country) => {
+    const matchesSearch = searchQuery.trim()
+      ? country.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        country.capital.toLowerCase().includes(searchQuery.toLowerCase())
+      : true;
 
-  const activeCountries = filteredCountries.filter(
-    (c) => c.status === "active"
-  );
-  const comingSoonCountries = filteredCountries.filter(
+    const matchesFilter =
+      selectedFilter === "all" || country.status === selectedFilter;
+
+    return matchesSearch && matchesFilter;
+  });
+
+  const activeCount = countries.filter((c) => c.status === "active").length;
+  const comingSoonCount = countries.filter(
     (c) => c.status === "coming-soon"
-  );
+  ).length;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50">
+    <div className="min-h-screen bg-white">
       <style jsx global>{`
-        @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap");
+        @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap");
 
         body {
-          font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
-            sans-serif;
+          font-family: "Inter", sans-serif;
           font-size: 15px;
           font-weight: 400;
           line-height: 1.6;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
         }
 
         h1,
@@ -209,294 +233,316 @@ export default function ERCCMPortal() {
           line-height: 1.2;
         }
 
-        @keyframes float {
-          0%,
-          100% {
-            transform: translateY(0px);
-          }
-          50% {
-            transform: translateY(-10px);
-          }
-        }
-
-        .animate-float {
-          animation: float 3s ease-in-out infinite;
-        }
-
-        @keyframes fade-in-up {
-          from {
-            opacity: 0;
-            transform: translateY(20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        .animate-fade-in-up {
-          animation: fade-in-up 0.6s ease-out;
-        }
-
-        @keyframes slide-in-right {
-          from {
-            transform: translateX(100%);
-          }
-          to {
-            transform: translateX(0);
-          }
-        }
-
-        .animate-slide-in-right {
-          animation: slide-in-right 0.3s ease-out;
-        }
-
         html {
           scroll-behavior: smooth;
         }
 
         ::-webkit-scrollbar {
-          width: 8px;
+          width: 6px;
+          height: 6px;
         }
 
         ::-webkit-scrollbar-track {
-          background: #f1f5f9;
+          background: transparent;
         }
 
         ::-webkit-scrollbar-thumb {
-          background: linear-gradient(180deg, #059669, #10b981);
-          border-radius: 4px;
+          background: #d1d5db;
+          border-radius: 3px;
         }
 
         ::-webkit-scrollbar-thumb:hover {
-          background: linear-gradient(180deg, #047857, #059669);
+          background: #9ca3af;
         }
       `}</style>
 
+      {/* TOP BAR */}
+      <div className="bg-[#003D7A] text-white py-2 text-xs">
+        <div className="container mx-auto px-6 lg:px-12 flex items-center justify-between">
+          <div className="flex items-center space-x-6">
+            <span className="flex items-center space-x-1">
+              <Clock size={12} />
+              <span>Lun - Ven : 8h - 18h</span>
+            </span>
+            <span className="hidden md:inline">
+              Support technique disponible
+            </span>
+          </div>
+          <div className="flex items-center space-x-4">
+            <a href="#" className="hover:underline">
+              Aide
+            </a>
+            <a href="#" className="hover:underline">
+              Contact
+            </a>
+            <a href="#" className="hover:underline">
+              FR
+            </a>
+          </div>
+        </div>
+      </div>
+
       {/* HEADER */}
-      <header className="bg-white/80 backdrop-blur-md shadow-sm border-b border-emerald-100 sticky top-0 z-50">
+      <header className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
         <div className="container mx-auto px-6 lg:px-12">
-          <div className="flex items-center justify-between h-18">
-            <div className="flex items-center space-x-3">
-              <div className="w-11 h-11 bg-gradient-to-br from-emerald-600 to-teal-600 rounded-lg flex items-center justify-center shadow-lg">
-                <FileText className="text-white" size={22} />
-              </div>
-              <div>
-                <div className="text-xl font-bold bg-gradient-to-r from-emerald-700 to-teal-700 bg-clip-text text-transparent">
-                  eRCCM
+          <div className="flex items-center justify-between h-20">
+            <div className="flex items-center space-x-12">
+              <div className="flex items-center space-x-3">
+                <div className="text-2xl font-black text-[#003D7A]">
+                  eRCCM<span className="text-[#E63946]">.</span>
                 </div>
-                <div className="text-xs text-gray-500 font-medium">
+                <div className="hidden md:block h-8 w-px bg-gray-300"></div>
+                <div className="hidden md:block text-xs text-gray-600 font-medium">
                   Espace OHADA
                 </div>
               </div>
+
+              <nav className="hidden lg:flex items-center space-x-8">
+                <a
+                  href="#search"
+                  className="text-sm font-medium text-gray-700 hover:text-[#003D7A] transition-colors"
+                >
+                  Rechercher
+                </a>
+                <a
+                  href="#countries"
+                  className="text-sm font-medium text-gray-700 hover:text-[#003D7A] transition-colors"
+                >
+                  Pays membres
+                </a>
+                <a
+                  href="#services"
+                  className="text-sm font-medium text-gray-700 hover:text-[#003D7A] transition-colors"
+                >
+                  Nos services
+                </a>
+                <a
+                  href="#about"
+                  className="text-sm font-medium text-gray-700 hover:text-[#003D7A] transition-colors"
+                >
+                  À propos
+                </a>
+              </nav>
             </div>
 
-            <nav className="hidden md:flex items-center space-x-8">
-              <a
-                href="#countries"
-                className="text-gray-600 hover:text-emerald-600 transition-colors duration-300 font-medium text-sm"
-              >
-                Pays membres
-              </a>
-              <a
-                href="#about"
-                className="text-gray-600 hover:text-emerald-600 transition-colors duration-300 font-medium text-sm"
-              >
-                À propos
-              </a>
-              <a
-                href="#contact"
-                className="text-gray-600 hover:text-emerald-600 transition-colors duration-300 font-medium text-sm"
-              >
-                Contact
-              </a>
-              <button className="bg-gradient-to-r from-emerald-600 to-teal-600 text-white px-6 py-2 rounded-lg hover:shadow-lg hover:scale-105 transition-all duration-300 text-sm font-medium">
-                Documentation
+            <div className="flex items-center space-x-4">
+              <button className="hidden md:block text-sm font-medium text-gray-700 hover:text-[#003D7A] transition-colors">
+                Espace Pro
               </button>
-            </nav>
+              <button className="bg-[#E63946] text-white px-5 py-2.5 text-sm font-semibold hover:bg-[#d62839] transition-colors">
+                Accès direct
+              </button>
 
-            <button
-              className="md:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors"
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-            >
-              {isMenuOpen ? <X size={22} /> : <Menu size={22} />}
-            </button>
+              <button
+                className="lg:hidden p-2"
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+              >
+                {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+              </button>
+            </div>
           </div>
-
-          {/* Mobile Sidebar */}
-          {isMenuOpen && (
-            <>
-              {/* Backdrop */}
-              <div
-                className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 md:hidden"
-                onClick={() => setIsMenuOpen(false)}
-              ></div>
-
-              {/* Sidebar */}
-              <div className="fixed top-0 right-0 bottom-0 w-72 bg-white shadow-2xl z-50 md:hidden animate-slide-in-right">
-                <div className="p-6">
-                  <div className="flex items-center justify-between mb-8">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 bg-gradient-to-br from-emerald-600 to-teal-600 rounded-lg flex items-center justify-center shadow-lg">
-                        <FileText className="text-white" size={20} />
-                      </div>
-                      <div>
-                        <div className="text-lg font-bold text-gray-900">
-                          eRCCM
-                        </div>
-                        <div className="text-xs text-gray-500">
-                          Espace OHADA
-                        </div>
-                      </div>
-                    </div>
-                    <button
-                      onClick={() => setIsMenuOpen(false)}
-                      className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                    >
-                      <X size={20} />
-                    </button>
-                  </div>
-
-                  <nav className="flex flex-col space-y-1">
-                    <a
-                      href="#countries"
-                      className="flex items-center space-x-3 text-gray-700 hover:text-emerald-600 hover:bg-emerald-50 transition-all px-4 py-3 rounded-lg font-medium text-sm"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      <Globe size={18} />
-                      <span>Pays membres</span>
-                    </a>
-                    <a
-                      href="#about"
-                      className="flex items-center space-x-3 text-gray-700 hover:text-emerald-600 hover:bg-emerald-50 transition-all px-4 py-3 rounded-lg font-medium text-sm"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      <FileText size={18} />
-                      <span>À propos</span>
-                    </a>
-                    <a
-                      href="#contact"
-                      className="flex items-center space-x-3 text-gray-700 hover:text-emerald-600 hover:bg-emerald-50 transition-all px-4 py-3 rounded-lg font-medium text-sm"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      <Mail size={18} />
-                      <span>Contact</span>
-                    </a>
-                    <button className="flex items-center justify-center space-x-2 bg-gradient-to-r from-emerald-600 to-teal-600 text-white px-6 py-3 rounded-lg text-sm font-medium mt-4 hover:shadow-lg transition-all">
-                      <FileText size={18} />
-                      <span>Documentation</span>
-                    </button>
-                  </nav>
-                </div>
-              </div>
-            </>
-          )}
         </div>
       </header>
 
+      {/* MOBILE MENU */}
+      {isMenuOpen && (
+        <>
+          <div
+            className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+            onClick={() => setIsMenuOpen(false)}
+          ></div>
+
+          <div className="fixed top-0 right-0 bottom-0 w-80 bg-white shadow-2xl z-50 lg:hidden overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-8">
+                <div className="text-2xl font-black text-[#003D7A]">
+                  eRCCM<span className="text-[#E63946]">.</span>
+                </div>
+                <button onClick={() => setIsMenuOpen(false)} className="p-2">
+                  <X size={24} />
+                </button>
+              </div>
+
+              <nav className="space-y-2">
+                <a
+                  href="#search"
+                  className="block px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Rechercher
+                </a>
+                <a
+                  href="#countries"
+                  className="block px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Pays membres
+                </a>
+                <a
+                  href="#services"
+                  className="block px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Nos services
+                </a>
+                <a
+                  href="#about"
+                  className="block px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  À propos
+                </a>
+                <div className="pt-4 border-t border-gray-200">
+                  <a
+                    href="#"
+                    className="block px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded"
+                  >
+                    Espace Pro
+                  </a>
+                </div>
+              </nav>
+            </div>
+          </div>
+        </>
+      )}
+
       {/* HERO SECTION */}
-      <section className="pt-16 pb-12 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzA1OTY2OSIgc3Ryb2tlLW9wYWNpdHk9IjAuMDUiIHN0cm9rZS13aWR0aD0iMSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNncmlkKSIvPjwvc3ZnPg==')] opacity-40"></div>
-
-        <div className="container mx-auto px-6 lg:px-12 relative z-10">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            {/* Left Content */}
-            <div className="animate-fade-in-up">
-              <div className="inline-flex items-center space-x-2 bg-white px-4 py-2 rounded-lg border border-emerald-200 shadow-sm mb-6">
-                <Scale className="text-emerald-600" size={18} />
-                <span className="text-sm font-medium text-gray-700">
-                  Registre de Commerce et du Crédit Mobilier
-                </span>
-              </div>
-
-              <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6 leading-tight">
-                Accédez aux portails
-                <br />
-                <span className="bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
-                  RCCM de l'OHADA
-                </span>
-              </h1>
-
-              <p className="text-base text-gray-600 leading-relaxed mb-8">
-                Consultez les registres du commerce de 17 pays membres de
-                l'Organisation pour l'Harmonisation en Afrique du Droit des
-                Affaires. Accès direct aux portails nationaux en un clic.
-              </p>
-
-              <div className="flex flex-wrap gap-3">
-                <div className="flex items-center space-x-2 bg-white px-4 py-2 rounded-lg border border-emerald-100 shadow-sm">
-                  <Building2 className="text-emerald-600" size={18} />
-                  <span className="text-sm font-medium text-gray-700">
-                    17 Pays membres
-                  </span>
-                </div>
-                <div className="flex items-center space-x-2 bg-white px-4 py-2 rounded-lg border border-emerald-100 shadow-sm">
-                  <Shield className="text-emerald-600" size={18} />
-                  <span className="text-sm font-medium text-gray-700">
-                    Accès sécurisé
-                  </span>
-                </div>
-                <div className="flex items-center space-x-2 bg-white px-4 py-2 rounded-lg border border-emerald-100 shadow-sm">
-                  <Users className="text-emerald-600" size={18} />
-                  <span className="text-sm font-medium text-gray-700">
-                    Harmonisation juridique
-                  </span>
-                </div>
-              </div>
+      <section className="bg-gradient-to-br from-[#003D7A] to-[#0055A5] text-white py-20">
+        <div className="container mx-auto px-6 lg:px-12">
+          <div className="max-w-4xl">
+            <div className="flex items-center space-x-2 mb-6">
+              <div className="h-1 w-12 bg-[#E63946]"></div>
+              <span className="text-sm font-semibold tracking-wide uppercase">
+                Registre de Commerce
+              </span>
             </div>
 
-            {/* Right Image */}
-            <div className="relative animate-float hidden lg:block">
-              <div className="relative rounded-lg overflow-hidden shadow-2xl">
-                <img
-                  src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800&auto=format&fit=crop"
-                  alt="OHADA Business"
-                  className="w-full h-[400px] object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-emerald-900/60 to-transparent"></div>
-                <div className="absolute bottom-6 left-6 right-6">
-                  <div className="bg-white/95 backdrop-blur-sm p-4 rounded-lg border border-emerald-100">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 bg-gradient-to-br from-emerald-600 to-teal-600 rounded-lg flex items-center justify-center">
-                        <Scale className="text-white" size={20} />
-                      </div>
-                      <div>
-                        <div className="font-bold text-gray-900 text-sm">
-                          OHADA
-                        </div>
-                        <div className="text-xs text-gray-600">
-                          17 États membres
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+            <h1 className="text-4xl lg:text-6xl font-black mb-6 leading-tight">
+              Accédez aux données
+              <br />
+              officielles du RCCM
+            </h1>
+
+            <p className="text-lg text-blue-100 mb-8 max-w-2xl">
+              Consultez les informations des entreprises immatriculées dans les
+              17 pays de l'espace OHADA. Recherche rapide, données certifiées,
+              accès direct aux portails nationaux.
+            </p>
+
+            <div className="flex flex-wrap gap-4">
+              <button className="bg-[#E63946] text-white px-8 py-4 text-sm font-bold hover:bg-[#d62839] transition-all flex items-center space-x-2">
+                <Search size={20} />
+                <span>Rechercher une entreprise</span>
+              </button>
+              <button className="bg-white/10 backdrop-blur-sm text-white px-8 py-4 text-sm font-bold hover:bg-white/20 transition-all border border-white/20">
+                Découvrir les services
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* STATS BAR */}
+      <section className="bg-white border-b border-gray-200 py-8">
+        <div className="container mx-auto px-6 lg:px-12">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+            <div>
+              <div className="text-3xl font-black text-[#003D7A] mb-1">17</div>
+              <div className="text-sm text-gray-600 font-medium">
+                Pays membres
+              </div>
+            </div>
+            <div>
+              <div className="text-3xl font-black text-[#003D7A] mb-1">
+                {activeCount}
+              </div>
+              <div className="text-sm text-gray-600 font-medium">
+                Portails actifs
+              </div>
+            </div>
+            <div>
+              <div className="text-3xl font-black text-[#003D7A] mb-1">
+                712K+
+              </div>
+              <div className="text-sm text-gray-600 font-medium">
+                Entreprises enregistrées
+              </div>
+            </div>
+            <div>
+              <div className="text-3xl font-black text-[#E63946] mb-1">
+                +12%
+              </div>
+              <div className="text-sm text-gray-600 font-medium">
+                Croissance annuelle
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* SEARCH SECTION */}
-      <section className="pb-12">
+      {/* SEARCH & FILTER SECTION */}
+      <section id="search" className="py-12 bg-gray-50">
         <div className="container mx-auto px-6 lg:px-12">
-          <div className="max-w-2xl mx-auto">
-            <div className="relative group">
-              <Search
-                className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-emerald-600 transition-colors"
-                size={20}
-              />
-              <input
-                type="text"
-                placeholder="Rechercher un pays..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-4 py-4 bg-white border-2 border-gray-200 rounded-lg focus:outline-none focus:border-emerald-500 transition-all duration-300 text-gray-700 text-sm shadow-md"
-              />
+          <div className="max-w-5xl mx-auto">
+            <h2 className="text-2xl font-black text-gray-900 mb-6">
+              Sélectionnez un pays
+            </h2>
+
+            <div className="bg-white border border-gray-200 shadow-sm p-6 mb-6">
+              <div className="flex flex-col lg:flex-row gap-4">
+                <div className="flex-1 relative">
+                  <Search
+                    className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+                    size={20}
+                  />
+                  <input
+                    type="text"
+                    placeholder="Rechercher un pays ou une capitale..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full pl-12 pr-4 py-3 border border-gray-300 focus:outline-none focus:border-[#003D7A] transition-colors text-sm"
+                  />
+                </div>
+
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setSelectedFilter("all")}
+                    className={`px-5 py-3 text-sm font-semibold transition-all ${
+                      selectedFilter === "all"
+                        ? "bg-[#003D7A] text-white"
+                        : "bg-white border border-gray-300 text-gray-700 hover:border-[#003D7A]"
+                    }`}
+                  >
+                    Tous ({countries.length})
+                  </button>
+                  <button
+                    onClick={() => setSelectedFilter("active")}
+                    className={`px-5 py-3 text-sm font-semibold transition-all ${
+                      selectedFilter === "active"
+                        ? "bg-[#003D7A] text-white"
+                        : "bg-white border border-gray-300 text-gray-700 hover:border-[#003D7A]"
+                    }`}
+                  >
+                    Actifs ({activeCount})
+                  </button>
+                  <button
+                    onClick={() => setSelectedFilter("coming-soon")}
+                    className={`px-5 py-3 text-sm font-semibold transition-all ${
+                      selectedFilter === "coming-soon"
+                        ? "bg-[#003D7A] text-white"
+                        : "bg-white border border-gray-300 text-gray-700 hover:border-[#003D7A]"
+                    }`}
+                  >
+                    Prochains ({comingSoonCount})
+                  </button>
+                </div>
+              </div>
             </div>
+
             {searchQuery && (
-              <div className="mt-3 text-sm text-gray-500 text-center">
-                {filteredCountries.length} pays trouvé
+              <div className="text-sm text-gray-600 mb-4">
+                <strong>{filteredCountries.length}</strong> résultat
+                {filteredCountries.length > 1 ? "s" : ""} trouvé
                 {filteredCountries.length > 1 ? "s" : ""}
               </div>
             )}
@@ -504,214 +550,404 @@ export default function ERCCMPortal() {
         </div>
       </section>
 
-      {/* COUNTRIES GRID */}
-      <section id="countries" className="pb-16">
+      {/* COUNTRIES TABLE */}
+      <section id="countries" className="py-12 bg-white">
         <div className="container mx-auto px-6 lg:px-12">
-          {/* Active Countries */}
-          {activeCountries.length > 0 && (
-            <div className="mb-12">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6 text-left">
-                <span className="inline-flex items-center">
-                  <div className="w-1 h-8 bg-gradient-to-b from-emerald-600 to-teal-600 rounded-full mr-3"></div>
-                  Portails actifs
-                </span>
-              </h2>
+          <div className="max-w-5xl mx-auto">
+            {filteredCountries.length > 0 ? (
+              <div className="bg-white border border-gray-200 overflow-hidden">
+                {/* Desktop Table */}
+                <div className="hidden md:block overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="bg-gray-50 border-b border-gray-200">
+                        <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wide">
+                          Pays
+                        </th>
+                        <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wide">
+                          Capitale
+                        </th>
+                        <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wide">
+                          Entreprises
+                        </th>
+                        <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wide">
+                          Croissance
+                        </th>
+                        <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wide">
+                          Statut
+                        </th>
+                        <th className="px-6 py-4 text-right text-xs font-bold text-gray-700 uppercase tracking-wide">
+                          Action
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-200">
+                      {filteredCountries.map((country) => (
+                        <tr
+                          key={country.id}
+                          className="hover:bg-gray-50 transition-colors"
+                        >
+                          <td className="px-6 py-4">
+                            <div className="flex items-center space-x-3">
+                              <span className="text-3xl">{country.flag}</span>
+                              <span className="font-semibold text-gray-900">
+                                {country.name}
+                              </span>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4">
+                            <div className="flex items-center text-sm text-gray-600">
+                              <MapPin size={14} className="mr-1" />
+                              {country.capital}
+                            </div>
+                          </td>
+                          <td className="px-6 py-4">
+                            {country.stats ? (
+                              <span className="text-sm font-semibold text-gray-900">
+                                {country.stats.companies}
+                              </span>
+                            ) : (
+                              <span className="text-sm text-gray-400">—</span>
+                            )}
+                          </td>
+                          <td className="px-6 py-4">
+                            {country.stats ? (
+                              <span className="inline-flex items-center text-sm font-semibold text-green-600">
+                                <TrendingUp size={14} className="mr-1" />
+                                {country.stats.growth}
+                              </span>
+                            ) : (
+                              <span className="text-sm text-gray-400">—</span>
+                            )}
+                          </td>
+                          <td className="px-6 py-4">
+                            {country.status === "active" ? (
+                              <span className="inline-flex items-center px-2.5 py-1 text-xs font-semibold text-green-700 bg-green-50 border border-green-200">
+                                <CheckCircle size={12} className="mr-1" />
+                                Actif
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center px-2.5 py-1 text-xs font-semibold text-amber-700 bg-amber-50 border border-amber-200">
+                                <Clock size={12} className="mr-1" />
+                                Prochainement
+                              </span>
+                            )}
+                          </td>
+                          <td className="px-6 py-4 text-right">
+                            {country.status === "active" ? (
+                              <a
+                                href={country.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center text-sm font-bold text-[#E63946] hover:text-[#d62839] transition-colors"
+                              >
+                                Accéder
+                                <ExternalLink size={14} className="ml-1" />
+                              </a>
+                            ) : (
+                              <span className="text-sm text-gray-400">
+                                Non disponible
+                              </span>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
 
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                {activeCountries.map((country, index) => (
-                  <a
-                    key={country.id}
-                    href={country.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group bg-white rounded-lg border-2 border-gray-200 hover:border-emerald-500 p-6 transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
-                    onMouseEnter={() => setHoveredCountry(country.id)}
-                    onMouseLeave={() => setHoveredCountry(null)}
-                    style={{ animationDelay: `${index * 0.05}s` }}
-                  >
-                    <div className="flex items-start justify-between mb-4">
-                      <div className="text-5xl">{country.flag}</div>
-                      <div
-                        className={`w-8 h-8 bg-emerald-100 rounded-lg flex items-center justify-center transition-all duration-300 ${
-                          hoveredCountry === country.id ? "bg-emerald-600" : ""
-                        }`}
-                      >
-                        <ExternalLink
-                          className={`transition-colors ${
-                            hoveredCountry === country.id
-                              ? "text-white"
-                              : "text-emerald-600"
-                          }`}
-                          size={16}
-                        />
+                {/* Mobile Cards */}
+                <div className="md:hidden divide-y divide-gray-200">
+                  {filteredCountries.map((country) => (
+                    <div key={country.id} className="p-4">
+                      <div className="flex items-start justify-between mb-3">
+                        <div className="flex items-center space-x-3">
+                          <span className="text-3xl">{country.flag}</span>
+                          <div>
+                            <div className="font-semibold text-gray-900">
+                              {country.name}
+                            </div>
+                            <div className="flex items-center text-xs text-gray-600 mt-0.5">
+                              <MapPin size={12} className="mr-1" />
+                              {country.capital}
+                            </div>
+                          </div>
+                        </div>
+                        {country.status === "active" ? (
+                          <span className="inline-flex items-center px-2 py-1 text-xs font-semibold text-green-700 bg-green-50 border border-green-200">
+                            Actif
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center px-2 py-1 text-xs font-semibold text-amber-700 bg-amber-50 border border-amber-200">
+                            Prochain
+                          </span>
+                        )}
                       </div>
-                    </div>
 
-                    <h3 className="text-lg font-bold text-gray-900 mb-1">
-                      {country.name}
-                    </h3>
-                    <div className="flex items-center text-sm text-gray-500 mb-3">
-                      <MapPin size={14} className="mr-1" />
-                      {country.capital}
-                    </div>
+                      {country.stats && (
+                        <div className="flex items-center gap-4 text-xs mb-3">
+                          <span className="text-gray-600">
+                            <strong className="text-gray-900">
+                              {country.stats.companies}
+                            </strong>{" "}
+                            entreprises
+                          </span>
+                          <span className="text-green-600 font-semibold">
+                            {country.stats.growth}
+                          </span>
+                        </div>
+                      )}
 
-                    <div className="flex items-center text-sm font-medium text-emerald-600 group-hover:text-emerald-700">
-                      <span>Accéder au portail</span>
-                      <ChevronRight
-                        size={16}
-                        className={`ml-1 transition-transform ${
-                          hoveredCountry === country.id ? "translate-x-1" : ""
-                        }`}
-                      />
+                      {country.status === "active" && (
+                        <a
+                          href={country.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="block w-full text-center bg-[#E63946] text-white px-4 py-2.5 text-sm font-bold hover:bg-[#d62839] transition-colors"
+                        >
+                          Accéder au portail
+                        </a>
+                      )}
                     </div>
-                  </a>
-                ))}
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <div className="text-center py-16 bg-white border border-gray-200">
+                <Search className="mx-auto mb-4 text-gray-300" size={48} />
+                <h3 className="text-lg font-bold text-gray-900 mb-2">
+                  Aucun résultat
+                </h3>
+                <p className="text-sm text-gray-600">
+                  Essayez avec un autre terme de recherche
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* SERVICES SECTION */}
+      <section id="services" className="py-16 bg-gray-50">
+        <div className="container mx-auto px-6 lg:px-12">
+          <div className="max-w-5xl mx-auto">
+            <h2 className="text-3xl font-black text-gray-900 mb-12">
+              Nos services
+            </h2>
+
+            <div className="grid md:grid-cols-3 gap-6">
+              <div className="bg-white border border-gray-200 p-8 hover:border-[#003D7A] transition-all group">
+                <div className="w-14 h-14 bg-[#003D7A] text-white flex items-center justify-center mb-6 group-hover:bg-[#E63946] transition-colors">
+                  <Building2 size={28} />
+                </div>
+                <h3 className="text-lg font-black text-gray-900 mb-3">
+                  Recherche d'entreprises
+                </h3>
+                <p className="text-sm text-gray-600 mb-4 leading-relaxed">
+                  Consultez les informations officielles des entreprises
+                  immatriculées au RCCM
+                </p>
+                <a
+                  href="#"
+                  className="inline-flex items-center text-sm font-bold text-[#003D7A] group-hover:text-[#E63946]"
+                >
+                  En savoir plus
+                  <ArrowRight size={16} className="ml-1" />
+                </a>
+              </div>
+
+              <div className="bg-white border border-gray-200 p-8 hover:border-[#003D7A] transition-all group">
+                <div className="w-14 h-14 bg-[#003D7A] text-white flex items-center justify-center mb-6 group-hover:bg-[#E63946] transition-colors">
+                  <FileText size={28} />
+                </div>
+                <h3 className="text-lg font-black text-gray-900 mb-3">
+                  Documents officiels
+                </h3>
+                <p className="text-sm text-gray-600 mb-4 leading-relaxed">
+                  Commandez des extraits K-bis, statuts et autres documents
+                  certifiés
+                </p>
+                <a
+                  href="#"
+                  className="inline-flex items-center text-sm font-bold text-[#003D7A] group-hover:text-[#E63946]"
+                >
+                  En savoir plus
+                  <ArrowRight size={16} className="ml-1" />
+                </a>
+              </div>
+
+              <div className="bg-white border border-gray-200 p-8 hover:border-[#003D7A] transition-all group">
+                <div className="w-14 h-14 bg-[#003D7A] text-white flex items-center justify-center mb-6 group-hover:bg-[#E63946] transition-colors">
+                  <BarChart3 size={28} />
+                </div>
+                <h3 className="text-lg font-black text-gray-900 mb-3">
+                  Surveillance
+                </h3>
+                <p className="text-sm text-gray-600 mb-4 leading-relaxed">
+                  Surveillez les modifications juridiques et financières des
+                  entreprises
+                </p>
+                <a
+                  href="#"
+                  className="inline-flex items-center text-sm font-bold text-[#003D7A] group-hover:text-[#E63946]"
+                >
+                  En savoir plus
+                  <ArrowRight size={16} className="ml-1" />
+                </a>
               </div>
             </div>
-          )}
-
-          {/* Coming Soon Countries */}
-          {comingSoonCountries.length > 0 && (
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-6 text-left">
-                <span className="inline-flex items-center">
-                  <div className="w-1 h-8 bg-gradient-to-b from-amber-500 to-orange-500 rounded-full mr-3"></div>
-                  Bientôt disponibles
-                </span>
-              </h2>
-
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                {comingSoonCountries.map((country, index) => (
-                  <div
-                    key={country.id}
-                    className="bg-white rounded-lg border-2 border-dashed border-gray-300 p-6 opacity-60"
-                    style={{ animationDelay: `${index * 0.05}s` }}
-                  >
-                    <div className="flex items-start justify-between mb-4">
-                      <div className="text-5xl grayscale">{country.flag}</div>
-                      <div className="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center">
-                        <FileText className="text-amber-600" size={16} />
-                      </div>
-                    </div>
-
-                    <h3 className="text-lg font-bold text-gray-900 mb-1">
-                      {country.name}
-                    </h3>
-                    <div className="flex items-center text-sm text-gray-500 mb-3">
-                      <MapPin size={14} className="mr-1" />
-                      {country.capital}
-                    </div>
-
-                    <div className="inline-flex items-center text-xs font-medium text-amber-600 bg-amber-50 px-3 py-1 rounded-full border border-amber-200">
-                      En cours de déploiement
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {filteredCountries.length === 0 && (
-            <div className="text-center py-16">
-              <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Search className="text-gray-400" size={32} />
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                Aucun pays trouvé
-              </h3>
-              <p className="text-gray-500 text-sm">
-                Essayez avec un autre terme de recherche
-              </p>
-            </div>
-          )}
+          </div>
         </div>
       </section>
 
       {/* ABOUT SECTION */}
       <section id="about" className="py-16 bg-white">
         <div className="container mx-auto px-6 lg:px-12">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            {/* Left - Image */}
-            <div className="relative order-2 lg:order-1">
-              <div className="relative rounded-lg overflow-hidden shadow-xl">
-                <img
-                  src="https://images.unsplash.com/photo-1521791136064-7986c2920216?w=800&auto=format&fit=crop"
-                  alt="OHADA Legal Framework"
-                  className="w-full h-[500px] object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-gray-900/70 to-transparent"></div>
-                <div className="absolute bottom-8 left-8 right-8">
-                  <div className="text-white">
-                    <div className="text-3xl font-bold mb-2">17</div>
-                    <div className="text-sm opacity-90">
-                      États membres de l'OHADA
+          <div className="max-w-5xl mx-auto">
+            <div className="grid lg:grid-cols-2 gap-12 items-center">
+              <div>
+                <div className="flex items-center space-x-2 mb-4">
+                  <div className="h-1 w-12 bg-[#E63946]"></div>
+                  <span className="text-sm font-semibold text-[#003D7A] tracking-wide uppercase">
+                    À propos
+                  </span>
+                </div>
+
+                <h2 className="text-3xl font-black text-gray-900 mb-6">
+                  Le RCCM dans l'espace OHADA
+                </h2>
+
+                <p className="text-sm text-gray-600 mb-6 leading-relaxed">
+                  Le Registre de Commerce et du Crédit Mobilier (RCCM) est
+                  l'instrument juridique central de publicité légale des
+                  entreprises dans les 17 pays membres de l'OHADA. Il garantit
+                  la transparence et la sécurité des transactions commerciales.
+                </p>
+
+                <div className="space-y-4">
+                  <div className="flex items-start space-x-3">
+                    <div className="w-6 h-6 bg-[#E63946] text-white flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <CheckCircle size={14} />
+                    </div>
+                    <div>
+                      <div className="font-semibold text-gray-900 text-sm mb-1">
+                        Immatriculation obligatoire
+                      </div>
+                      <div className="text-xs text-gray-600">
+                        Pour toute personne physique ou morale exerçant une
+                        activité commerciale
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start space-x-3">
+                    <div className="w-6 h-6 bg-[#E63946] text-white flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <CheckCircle size={14} />
+                    </div>
+                    <div>
+                      <div className="font-semibold text-gray-900 text-sm mb-1">
+                        Numéro unique d'identification
+                      </div>
+                      <div className="text-xs text-gray-600">
+                        Attribution d'un numéro RCCM valable dans tout l'espace
+                        OHADA
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start space-x-3">
+                    <div className="w-6 h-6 bg-[#E63946] text-white flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <CheckCircle size={14} />
+                    </div>
+                    <div>
+                      <div className="font-semibold text-gray-900 text-sm mb-1">
+                        Sécurité juridique
+                      </div>
+                      <div className="text-xs text-gray-600">
+                        Protection des tiers et publicité des actes commerciaux
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </div>
 
-            {/* Right - Content */}
-            <div className="order-1 lg:order-2">
-              <div className="inline-block bg-emerald-50 px-4 py-1.5 rounded-lg mb-4 border border-emerald-200">
-                <span className="text-emerald-700 font-semibold text-xs uppercase tracking-wide">
-                  À propos du RCCM
-                </span>
-              </div>
-
-              <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-6">
-                Qu'est-ce que le <span className="text-emerald-600">RCCM</span>{" "}
-                ?
-              </h2>
-
-              <p className="text-gray-600 text-base leading-relaxed mb-8">
-                Le Registre de Commerce et du Crédit Mobilier (RCCM) est un
-                registre public qui recense toutes les entreprises commerciales
-                et les garanties mobilières dans l'espace OHADA. Il permet
-                d'assurer la transparence et la sécurité juridique des
-                transactions commerciales.
-              </p>
-
-              <div className="space-y-4">
-                <div className="flex items-start space-x-4">
-                  <div className="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <Building2 className="text-emerald-600" size={24} />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-gray-900 mb-1">
-                      Immatriculation
-                    </h3>
-                    <p className="text-sm text-gray-600">
-                      Enregistrement officiel des entreprises commerciales
-                    </p>
-                  </div>
+                <div className="mt-8">
+                  <a
+                    href="#"
+                    className="inline-flex items-center text-sm font-bold text-[#E63946] hover:text-[#d62839]"
+                  >
+                    En savoir plus sur l'OHADA
+                    <ArrowRight size={16} className="ml-1" />
+                  </a>
                 </div>
+              </div>
 
-                <div className="flex items-start space-x-4">
-                  <div className="w-12 h-12 bg-teal-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <Shield className="text-teal-600" size={24} />
+              <div className="relative">
+                <div className="bg-gray-100 p-8 border-l-4 border-[#003D7A]">
+                  <div className="mb-6">
+                    <div className="text-4xl font-black text-[#003D7A] mb-2">
+                      712,340
+                    </div>
+                    <div className="text-sm text-gray-600 font-medium">
+                      Entreprises immatriculées
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="font-bold text-gray-900 mb-1">
-                      Sécurité juridique
-                    </h3>
-                    <p className="text-sm text-gray-600">
-                      Protection des droits et garanties mobilières
-                    </p>
-                  </div>
-                </div>
 
-                <div className="flex items-start space-x-4">
-                  <div className="w-12 h-12 bg-cyan-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <Globe className="text-cyan-600" size={24} />
+                  <div className="space-y-4">
+                    <div>
+                      <div className="flex items-center justify-between text-xs mb-2">
+                        <span className="font-semibold text-gray-700">
+                          Sociétés
+                        </span>
+                        <span className="font-bold text-gray-900">68%</span>
+                      </div>
+                      <div className="h-2 bg-gray-200 overflow-hidden">
+                        <div
+                          className="h-full bg-[#003D7A]"
+                          style={{ width: "68%" }}
+                        ></div>
+                      </div>
+                    </div>
+
+                    <div>
+                      <div className="flex items-center justify-between text-xs mb-2">
+                        <span className="font-semibold text-gray-700">
+                          Entreprises individuelles
+                        </span>
+                        <span className="font-bold text-gray-900">24%</span>
+                      </div>
+                      <div className="h-2 bg-gray-200 overflow-hidden">
+                        <div
+                          className="h-full bg-[#E63946]"
+                          style={{ width: "24%" }}
+                        ></div>
+                      </div>
+                    </div>
+
+                    <div>
+                      <div className="flex items-center justify-between text-xs mb-2">
+                        <span className="font-semibold text-gray-700">
+                          Autres formes
+                        </span>
+                        <span className="font-bold text-gray-900">8%</span>
+                      </div>
+                      <div className="h-2 bg-gray-200 overflow-hidden">
+                        <div
+                          className="h-full bg-gray-400"
+                          style={{ width: "8%" }}
+                        ></div>
+                      </div>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="font-bold text-gray-900 mb-1">
-                      Harmonisation
-                    </h3>
-                    <p className="text-sm text-gray-600">
-                      Uniformité du droit des affaires en Afrique
-                    </p>
+
+                  <div className="mt-6 pt-6 border-t border-gray-300">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="text-gray-600">
+                        Croissance annuelle moyenne
+                      </span>
+                      <span className="text-lg font-black text-green-600">
+                        +12.3%
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -720,113 +956,177 @@ export default function ERCCMPortal() {
         </div>
       </section>
 
-      {/* FOOTER */}
-      <footer id="contact" className="bg-gray-900 text-white pt-14 pb-8">
+      {/* CTA SECTION */}
+      <section className="bg-[#003D7A] text-white py-16">
         <div className="container mx-auto px-6 lg:px-12">
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
-            <div>
-              <div className="flex items-center space-x-3 mb-5">
-                <div className="w-10 h-10 bg-gradient-to-br from-emerald-600 to-teal-600 rounded-lg flex items-center justify-center">
-                  <FileText className="text-white" size={20} />
+          <div className="max-w-5xl mx-auto text-center">
+            <h2 className="text-3xl font-black mb-4">
+              Besoin d'informations sur une entreprise ?
+            </h2>
+            <p className="text-blue-100 mb-8 max-w-2xl mx-auto">
+              Accédez instantanément aux données officielles du registre de
+              commerce
+            </p>
+            <button className="bg-[#E63946] text-white px-10 py-4 text-sm font-bold hover:bg-[#d62839] transition-all inline-flex items-center space-x-2">
+              <Search size={20} />
+              <span>Lancer une recherche</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* FOOTER */}
+      <footer className="bg-gray-900 text-white pt-16 pb-8">
+        <div className="container mx-auto px-6 lg:px-12">
+          <div className="max-w-5xl mx-auto">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+              <div>
+                <div className="text-2xl font-black text-white mb-4">
+                  eRCCM<span className="text-[#E63946]">.</span>
                 </div>
-                <div>
-                  <div className="text-lg font-bold">eRCCM</div>
-                  <div className="text-xs text-gray-400">Espace OHADA</div>
+                <p className="text-sm text-gray-400 leading-relaxed mb-4">
+                  Portail d'accès aux registres de commerce des pays membres de
+                  l'OHADA.
+                </p>
+                <div className="text-xs text-gray-500">
+                  © 2025 eRCCM - Tous droits réservés
                 </div>
               </div>
-              <p className="text-gray-400 text-sm leading-relaxed">
-                Portail d'accès aux registres de commerce des pays membres de
-                l'OHADA.
-              </p>
-            </div>
 
-            <div>
-              <h3 className="font-semibold text-base mb-4">Navigation</h3>
-              <ul className="space-y-2.5">
-                {["Pays membres", "Documentation", "Guides", "FAQ"].map(
-                  (item) => (
-                    <li key={item}>
-                      <a
-                        href="#"
-                        className="text-gray-400 hover:text-white transition-colors text-sm"
-                      >
-                        {item}
-                      </a>
-                    </li>
-                  )
-                )}
-              </ul>
-            </div>
+              <div>
+                <h3 className="font-bold text-sm text-white mb-4 uppercase tracking-wide">
+                  Navigation
+                </h3>
+                <ul className="space-y-2.5 text-sm">
+                  <li>
+                    <a
+                      href="#"
+                      className="text-gray-400 hover:text-white transition-colors"
+                    >
+                      Rechercher
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href="#countries"
+                      className="text-gray-400 hover:text-white transition-colors"
+                    >
+                      Pays membres
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href="#services"
+                      className="text-gray-400 hover:text-white transition-colors"
+                    >
+                      Nos services
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href="#about"
+                      className="text-gray-400 hover:text-white transition-colors"
+                    >
+                      À propos
+                    </a>
+                  </li>
+                </ul>
+              </div>
 
-            <div>
-              <h3 className="font-semibold text-base mb-4">Ressources</h3>
-              <ul className="space-y-2.5">
-                {["Textes OHADA", "Procédures", "Formulaires", "Support"].map(
-                  (item) => (
-                    <li key={item}>
-                      <a
-                        href="#"
-                        className="text-gray-400 hover:text-white transition-colors text-sm"
-                      >
-                        {item}
-                      </a>
-                    </li>
-                  )
-                )}
-              </ul>
-            </div>
+              <div>
+                <h3 className="font-bold text-sm text-white mb-4 uppercase tracking-wide">
+                  Services
+                </h3>
+                <ul className="space-y-2.5 text-sm">
+                  <li>
+                    <a
+                      href="#"
+                      className="text-gray-400 hover:text-white transition-colors"
+                    >
+                      Recherche entreprise
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href="#"
+                      className="text-gray-400 hover:text-white transition-colors"
+                    >
+                      Documents officiels
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href="#"
+                      className="text-gray-400 hover:text-white transition-colors"
+                    >
+                      Surveillance
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href="#"
+                      className="text-gray-400 hover:text-white transition-colors"
+                    >
+                      API Développeurs
+                    </a>
+                  </li>
+                </ul>
+              </div>
 
-            <div>
-              <h3 className="font-semibold text-base mb-4">Contact</h3>
-              <ul className="space-y-3 text-gray-400 text-sm">
-                <li className="flex items-start space-x-3">
-                  <Mail
-                    size={18}
-                    className="text-emerald-500 mt-0.5 flex-shrink-0"
-                  />
+              <div>
+                <h3 className="font-bold text-sm text-white mb-4 uppercase tracking-wide">
+                  Contact
+                </h3>
+                <ul className="space-y-3 text-sm">
+                  <li className="flex items-start space-x-2 text-gray-400">
+                    <Mail
+                      size={16}
+                      className="text-[#E63946] mt-0.5 flex-shrink-0"
+                    />
+                    <a
+                      href="mailto:contact@erccm.africa"
+                      className="hover:text-white transition-colors"
+                    >
+                      contact@erccm.africa
+                    </a>
+                  </li>
+                  <li className="flex items-start space-x-2 text-gray-400">
+                    <Phone
+                      size={16}
+                      className="text-[#E63946] mt-0.5 flex-shrink-0"
+                    />
+                    <span>+229 XX XX XX XX</span>
+                  </li>
+                </ul>
+                <div className="mt-6">
                   <a
-                    href="mailto:contact@erccm.africa"
-                    className="hover:text-white transition-colors"
+                    href="#"
+                    className="text-sm font-bold text-[#E63946] hover:text-[#d62839] inline-flex items-center"
                   >
-                    contact@erccm.africa
+                    Centre d'aide
+                    <ArrowRight size={14} className="ml-1" />
                   </a>
-                </li>
-                <li className="flex items-start space-x-3">
-                  <Phone
-                    size={18}
-                    className="text-emerald-500 mt-0.5 flex-shrink-0"
-                  />
-                  <span>+229 XX XX XX XX</span>
-                </li>
-                <li className="flex items-start space-x-3">
-                  <Globe
-                    size={18}
-                    className="text-emerald-500 mt-0.5 flex-shrink-0"
-                  />
-                  <span>www.erccm.africa</span>
-                </li>
-              </ul>
+                </div>
+              </div>
             </div>
-          </div>
 
-          <div className="border-t border-gray-800 pt-8">
-            <div className="flex flex-col lg:flex-row justify-between items-center gap-4 text-sm">
-              <p className="text-gray-400 text-center lg:text-left">
-                © 2025 eRCCM - Espace OHADA. Tous droits réservés.
-              </p>
-              <div className="flex gap-6">
-                <a
-                  href="#"
-                  className="text-gray-400 hover:text-white transition-colors"
-                >
-                  Mentions légales
-                </a>
-                <a
-                  href="#"
-                  className="text-gray-400 hover:text-white transition-colors"
-                >
-                  Confidentialité
-                </a>
+            <div className="border-t border-gray-800 pt-8">
+              <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-500">
+                <div className="flex gap-6">
+                  <a href="#" className="hover:text-white transition-colors">
+                    Mentions légales
+                  </a>
+                  <a href="#" className="hover:text-white transition-colors">
+                    Politique de confidentialité
+                  </a>
+                  <a href="#" className="hover:text-white transition-colors">
+                    CGU
+                  </a>
+                </div>
+                <div className="flex items-center space-x-4">
+                  <span>Données certifiées OHADA</span>
+                  <Shield size={16} className="text-[#E63946]" />
+                </div>
               </div>
             </div>
           </div>
