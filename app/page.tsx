@@ -238,6 +238,19 @@ export default function ERCCMPortal() {
           animation: fade-in-up 0.6s ease-out;
         }
 
+        @keyframes slide-in-right {
+          from {
+            transform: translateX(100%);
+          }
+          to {
+            transform: translateX(0);
+          }
+        }
+
+        .animate-slide-in-right {
+          animation: slide-in-right 0.3s ease-out;
+        }
+
         html {
           scroll-behavior: smooth;
         }
@@ -310,35 +323,73 @@ export default function ERCCMPortal() {
             </button>
           </div>
 
+          {/* Mobile Sidebar */}
           {isMenuOpen && (
-            <div className="md:hidden py-4 border-t animate-fade-in-up">
-              <nav className="flex flex-col space-y-3">
-                <a
-                  href="#countries"
-                  className="text-gray-600 hover:text-emerald-600 transition-colors font-medium text-sm py-2"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Pays membres
-                </a>
-                <a
-                  href="#about"
-                  className="text-gray-600 hover:text-emerald-600 transition-colors font-medium text-sm py-2"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  À propos
-                </a>
-                <a
-                  href="#contact"
-                  className="text-gray-600 hover:text-emerald-600 transition-colors font-medium text-sm py-2"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Contact
-                </a>
-                <button className="bg-gradient-to-r from-emerald-600 to-teal-600 text-white px-6 py-2 rounded-lg text-sm font-medium mt-2">
-                  Documentation
-                </button>
-              </nav>
-            </div>
+            <>
+              {/* Backdrop */}
+              <div
+                className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 md:hidden"
+                onClick={() => setIsMenuOpen(false)}
+              ></div>
+
+              {/* Sidebar */}
+              <div className="fixed top-0 right-0 bottom-0 w-72 bg-white shadow-2xl z-50 md:hidden animate-slide-in-right">
+                <div className="p-6">
+                  <div className="flex items-center justify-between mb-8">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-10 h-10 bg-gradient-to-br from-emerald-600 to-teal-600 rounded-lg flex items-center justify-center shadow-lg">
+                        <FileText className="text-white" size={20} />
+                      </div>
+                      <div>
+                        <div className="text-lg font-bold text-gray-900">
+                          eRCCM
+                        </div>
+                        <div className="text-xs text-gray-500">
+                          Espace OHADA
+                        </div>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => setIsMenuOpen(false)}
+                      className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                    >
+                      <X size={20} />
+                    </button>
+                  </div>
+
+                  <nav className="flex flex-col space-y-1">
+                    <a
+                      href="#countries"
+                      className="flex items-center space-x-3 text-gray-700 hover:text-emerald-600 hover:bg-emerald-50 transition-all px-4 py-3 rounded-lg font-medium text-sm"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      <Globe size={18} />
+                      <span>Pays membres</span>
+                    </a>
+                    <a
+                      href="#about"
+                      className="flex items-center space-x-3 text-gray-700 hover:text-emerald-600 hover:bg-emerald-50 transition-all px-4 py-3 rounded-lg font-medium text-sm"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      <FileText size={18} />
+                      <span>À propos</span>
+                    </a>
+                    <a
+                      href="#contact"
+                      className="flex items-center space-x-3 text-gray-700 hover:text-emerald-600 hover:bg-emerald-50 transition-all px-4 py-3 rounded-lg font-medium text-sm"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      <Mail size={18} />
+                      <span>Contact</span>
+                    </a>
+                    <button className="flex items-center justify-center space-x-2 bg-gradient-to-r from-emerald-600 to-teal-600 text-white px-6 py-3 rounded-lg text-sm font-medium mt-4 hover:shadow-lg transition-all">
+                      <FileText size={18} />
+                      <span>Documentation</span>
+                    </button>
+                  </nav>
+                </div>
+              </div>
+            </>
           )}
         </div>
       </header>
@@ -348,46 +399,78 @@ export default function ERCCMPortal() {
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzA1OTY2OSIgc3Ryb2tlLW9wYWNpdHk9IjAuMDUiIHN0cm9rZS13aWR0aD0iMSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNncmlkKSIvPjwvc3ZnPg==')] opacity-40"></div>
 
         <div className="container mx-auto px-6 lg:px-12 relative z-10">
-          <div className="max-w-4xl mx-auto text-center animate-fade-in-up">
-            <div className="inline-flex items-center space-x-2 bg-white px-4 py-2 rounded-lg border border-emerald-200 shadow-sm mb-6">
-              <Scale className="text-emerald-600" size={18} />
-              <span className="text-sm font-medium text-gray-700">
-                Registre de Commerce et du Crédit Mobilier
-              </span>
-</div>
-
-            <h1 className="text-4xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
-              Accédez aux portails
-              <br />
-              <span className="bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
-                RCCM de l'OHADA
-              </span>
-            </h1>
-
-            <p className="text-base text-gray-600 leading-relaxed max-w-2xl mx-auto mb-8">
-              Consultez les registres du commerce de 17 pays membres de
-              l'Organisation pour l'Harmonisation en Afrique du Droit des
-              Affaires. Accès direct aux portails nationaux en un clic.
-            </p>
-
-            <div className="flex flex-wrap gap-3 justify-center">
-              <div className="flex items-center space-x-2 bg-white px-4 py-2 rounded-lg border border-emerald-100 shadow-sm">
-                <Building2 className="text-emerald-600" size={18} />
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            {/* Left Content */}
+            <div className="animate-fade-in-up">
+              <div className="inline-flex items-center space-x-2 bg-white px-4 py-2 rounded-lg border border-emerald-200 shadow-sm mb-6">
+                <Scale className="text-emerald-600" size={18} />
                 <span className="text-sm font-medium text-gray-700">
-                  17 Pays membres
+                  Registre de Commerce et du Crédit Mobilier
                 </span>
               </div>
-              <div className="flex items-center space-x-2 bg-white px-4 py-2 rounded-lg border border-emerald-100 shadow-sm">
-                <Shield className="text-emerald-600" size={18} />
-                <span className="text-sm font-medium text-gray-700">
-                  Accès sécurisé
+
+              <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6 leading-tight">
+                Accédez aux portails
+                <br />
+                <span className="bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
+                  RCCM de l'OHADA
                 </span>
+              </h1>
+
+              <p className="text-base text-gray-600 leading-relaxed mb-8">
+                Consultez les registres du commerce de 17 pays membres de
+                l'Organisation pour l'Harmonisation en Afrique du Droit des
+                Affaires. Accès direct aux portails nationaux en un clic.
+              </p>
+
+              <div className="flex flex-wrap gap-3">
+                <div className="flex items-center space-x-2 bg-white px-4 py-2 rounded-lg border border-emerald-100 shadow-sm">
+                  <Building2 className="text-emerald-600" size={18} />
+                  <span className="text-sm font-medium text-gray-700">
+                    17 Pays membres
+                  </span>
+                </div>
+                <div className="flex items-center space-x-2 bg-white px-4 py-2 rounded-lg border border-emerald-100 shadow-sm">
+                  <Shield className="text-emerald-600" size={18} />
+                  <span className="text-sm font-medium text-gray-700">
+                    Accès sécurisé
+                  </span>
+                </div>
+                <div className="flex items-center space-x-2 bg-white px-4 py-2 rounded-lg border border-emerald-100 shadow-sm">
+                  <Users className="text-emerald-600" size={18} />
+                  <span className="text-sm font-medium text-gray-700">
+                    Harmonisation juridique
+                  </span>
+                </div>
               </div>
-              <div className="flex items-center space-x-2 bg-white px-4 py-2 rounded-lg border border-emerald-100 shadow-sm">
-                <Users className="text-emerald-600" size={18} />
-                <span className="text-sm font-medium text-gray-700">
-                  Harmonisation juridique
-                </span>
+            </div>
+
+            {/* Right Image */}
+            <div className="relative animate-float hidden lg:block">
+              <div className="relative rounded-lg overflow-hidden shadow-2xl">
+                <img
+                  src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800&auto=format&fit=crop"
+                  alt="OHADA Business"
+                  className="w-full h-[400px] object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-emerald-900/60 to-transparent"></div>
+                <div className="absolute bottom-6 left-6 right-6">
+                  <div className="bg-white/95 backdrop-blur-sm p-4 rounded-lg border border-emerald-100">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-10 h-10 bg-gradient-to-br from-emerald-600 to-teal-600 rounded-lg flex items-center justify-center">
+                        <Scale className="text-white" size={20} />
+                      </div>
+                      <div>
+                        <div className="font-bold text-gray-900 text-sm">
+                          OHADA
+                        </div>
+                        <div className="text-xs text-gray-600">
+                          17 États membres
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -462,7 +545,7 @@ export default function ERCCMPortal() {
                           size={16}
                         />
                       </div>
-</div>
+                    </div>
 
                     <h3 className="text-lg font-bold text-gray-900 mb-1">
                       {country.name}
@@ -547,58 +630,90 @@ export default function ERCCMPortal() {
       {/* ABOUT SECTION */}
       <section id="about" className="py-16 bg-white">
         <div className="container mx-auto px-6 lg:px-12">
-          <div className="max-w-4xl mx-auto text-center">
-            <div className="inline-block bg-emerald-50 px-4 py-1.5 rounded-lg mb-4 border border-emerald-200">
-              <span className="text-emerald-700 font-semibold text-xs uppercase tracking-wide">
-                À propos du RCCM
-              </span>
-</div>
-
-            <h2 className="text-3xl font-bold text-gray-900 mb-6">
-              Qu'est-ce que le <span className="text-emerald-600">RCCM</span> ?
-            </h2>
-
-            <p className="text-gray-600 text-base leading-relaxed mb-8">
-              Le Registre de Commerce et du Crédit Mobilier (RCCM) est un
-              registre public qui recense toutes les entreprises commerciales et
-              les garanties mobilières dans l'espace OHADA. Il permet d'assurer
-              la transparence et la sécurité juridique des transactions
-              commerciales.
-            </p>
-
-            <div className="grid md:grid-cols-3 gap-6 text-left">
-              <div className="bg-emerald-50 p-6 rounded-lg border border-emerald-100">
-                <div className="w-12 h-12 bg-emerald-600 rounded-lg flex items-center justify-center mb-4">
-                  <Building2 className="text-white" size={24} />
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            {/* Left - Image */}
+            <div className="relative order-2 lg:order-1">
+              <div className="relative rounded-lg overflow-hidden shadow-xl">
+                <img
+                  src="https://images.unsplash.com/photo-1521791136064-7986c2920216?w=800&auto=format&fit=crop"
+                  alt="OHADA Legal Framework"
+                  className="w-full h-[500px] object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-gray-900/70 to-transparent"></div>
+                <div className="absolute bottom-8 left-8 right-8">
+                  <div className="text-white">
+                    <div className="text-3xl font-bold mb-2">17</div>
+                    <div className="text-sm opacity-90">
+                      États membres de l'OHADA
+                    </div>
+                  </div>
                 </div>
-                <h3 className="font-bold text-gray-900 mb-2">
-                  Immatriculation
-                </h3>
-                <p className="text-sm text-gray-600">
-                  Enregistrement officiel des entreprises commerciales
-                </p>
+              </div>
+            </div>
+
+            {/* Right - Content */}
+            <div className="order-1 lg:order-2">
+              <div className="inline-block bg-emerald-50 px-4 py-1.5 rounded-lg mb-4 border border-emerald-200">
+                <span className="text-emerald-700 font-semibold text-xs uppercase tracking-wide">
+                  À propos du RCCM
+                </span>
               </div>
 
-              <div className="bg-teal-50 p-6 rounded-lg border border-teal-100">
-                <div className="w-12 h-12 bg-teal-600 rounded-lg flex items-center justify-center mb-4">
-                  <Shield className="text-white" size={24} />
-                </div>
-                <h3 className="font-bold text-gray-900 mb-2">
-                  Sécurité juridique
-                </h3>
-                <p className="text-sm text-gray-600">
-                  Protection des droits et garanties mobilières
-                </p>
-              </div>
+              <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-6">
+                Qu'est-ce que le <span className="text-emerald-600">RCCM</span>{" "}
+                ?
+              </h2>
 
-              <div className="bg-cyan-50 p-6 rounded-lg border border-cyan-100">
-                <div className="w-12 h-12 bg-cyan-600 rounded-lg flex items-center justify-center mb-4">
-                  <Globe className="text-white" size={24} />
+              <p className="text-gray-600 text-base leading-relaxed mb-8">
+                Le Registre de Commerce et du Crédit Mobilier (RCCM) est un
+                registre public qui recense toutes les entreprises commerciales
+                et les garanties mobilières dans l'espace OHADA. Il permet
+                d'assurer la transparence et la sécurité juridique des
+                transactions commerciales.
+              </p>
+
+              <div className="space-y-4">
+                <div className="flex items-start space-x-4">
+                  <div className="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <Building2 className="text-emerald-600" size={24} />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-gray-900 mb-1">
+                      Immatriculation
+                    </h3>
+                    <p className="text-sm text-gray-600">
+                      Enregistrement officiel des entreprises commerciales
+                    </p>
+                  </div>
                 </div>
-                <h3 className="font-bold text-gray-900 mb-2">Harmonisation</h3>
-                <p className="text-sm text-gray-600">
-                  Uniformité du droit des affaires en Afrique
-                </p>
+
+                <div className="flex items-start space-x-4">
+                  <div className="w-12 h-12 bg-teal-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <Shield className="text-teal-600" size={24} />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-gray-900 mb-1">
+                      Sécurité juridique
+                    </h3>
+                    <p className="text-sm text-gray-600">
+                      Protection des droits et garanties mobilières
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start space-x-4">
+                  <div className="w-12 h-12 bg-cyan-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <Globe className="text-cyan-600" size={24} />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-gray-900 mb-1">
+                      Harmonisation
+                    </h3>
+                    <p className="text-sm text-gray-600">
+                      Uniformité du droit des affaires en Afrique
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
