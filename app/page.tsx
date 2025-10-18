@@ -289,7 +289,7 @@ export default function ERCCMPortal() {
             <div className="flex items-center space-x-12">
               <div className="flex items-center space-x-3">
                 <div className="text-2xl font-black text-[#003D7A]">
-                  eRCCM<span className="text-[#E63946]">.</span>
+                  infoGreffe<span className="text-[#E63946]">.</span>
                 </div>
                 <div className="hidden md:block h-8 w-px bg-gray-300"></div>
                 <div className="hidden md:block text-xs text-gray-600 font-medium">
@@ -356,7 +356,7 @@ export default function ERCCMPortal() {
             <div className="p-6">
               <div className="flex items-center justify-between mb-8">
                 <div className="text-2xl font-black text-[#003D7A]">
-                  eRCCM<span className="text-[#E63946]">.</span>
+                  infoGreffe<span className="text-[#E63946]">.</span>
                 </div>
                 <button onClick={() => setIsMenuOpen(false)} className="p-2">
                   <X size={24} />
@@ -982,14 +982,14 @@ export default function ERCCMPortal() {
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
               <div>
                 <div className="text-2xl font-black text-white mb-4">
-                  eRCCM<span className="text-[#E63946]">.</span>
+                  infoGreffe<span className="text-[#E63946]">.</span>
                 </div>
                 <p className="text-sm text-gray-400 leading-relaxed mb-4">
                   Portail d'accès aux registres de commerce des pays membres de
                   l'OHADA.
                 </p>
                 <div className="text-xs text-gray-500">
-                  © 2025 eRCCM - Tous droits réservés
+                  © 2025 infoGreffe - Tous droits réservés
                 </div>
               </div>
 
@@ -1084,10 +1084,10 @@ export default function ERCCMPortal() {
                       className="text-[#E63946] mt-0.5 flex-shrink-0"
                     />
                     <a
-                      href="mailto:contact@erccm.africa"
+                      href="mailto:contact@infogreffe.africa"
                       className="hover:text-white transition-colors"
                     >
-                      contact@erccm.africa
+                      contact@infogreffe.africa
                     </a>
                   </li>
                   <li className="flex items-start space-x-2 text-gray-400">
